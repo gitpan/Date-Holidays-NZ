@@ -1,6 +1,6 @@
 
 
-use Test::More tests => 195;
+use Test::More tests => 196;
 
 BEGIN { use_ok("Date::Holidays::NZ") }
 
@@ -177,4 +177,6 @@ is(nz_holiday_date(2035, "Otago $AD"), "0326", "nz_holiday_date(regional)");
 is(nz_holiday_date(2035, "Easter Monday"), "0326", "nz_holiday_date(national)");
 is(nz_holiday_date(2004, "Christmas Day"), "1227", "nz_holiday_date(national, overflow)");
 
+is(nz_holiday_date(2004, "Birthday of the Reigning Sovereign"),
+   "0607", "nz_holiday_date(alias)");
 

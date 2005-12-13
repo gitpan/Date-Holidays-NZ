@@ -5,7 +5,7 @@ use base qw(Exporter);
 use Set::Scalar;
 
 use vars qw($VERSION @EXPORT @EXPORT_OK);
-$VERSION = '0.99';
+$VERSION = '1.00';
 @EXPORT = qw(is_nz_holiday nz_holidays nz_regional_day nz_holiday_date);
 @EXPORT_OK = qw(%HOLIDAYS $NATIONAL_HOLIDAYS %regions
 		nz_region_code nz_region_name %holiday_cache);
@@ -83,6 +83,10 @@ our $NATIONAL_HOLIDAYS =
 		      "Queens Birthday",
 		      "Labour Day",
 		    );
+
+our %holiday_aliases =
+    ( "Birthday of the Reigning Sovereign" => "Queens Birthday",
+    );
 
 # These are Census 2001 region codes.
 our %regions =
@@ -319,6 +323,7 @@ sub is_nz_holiday {
 
 sub nz_holiday_date {
     my ($year, $holname) = @_;
+    $holname = $holiday_aliases{$holname} if $holiday_aliases{$holname};
     exists $HOLIDAYS{$holname} or croak "no such holiday $holname";
 
     if ( $NATIONAL_HOLIDAYS->has($holname) ) {
@@ -343,6 +348,8 @@ sub nz_holiday_date {
 1;
 
 __END__
+
+=encoding utf-8
 
 =head1 NAME
 
@@ -481,6 +488,12 @@ Valid holiday names are:
 
 Somebody let me know if any of those are incorrect.
 
+C<Date::Holidays::NZ> version 1.00 and later also supports referring
+to Queen's Birthday as "Birthday of the Reigning Sovereign".  Not that
+it has anything to do with the Queen's Birthday, really - it's just
+another day off to stop us British subjects getting all restless,
+revolutionary and whatnot.
+
 =back
 
 =head1 ERRATA
@@ -535,6 +548,10 @@ this module if you like.  Log a ticket if you want any of them to be
 added to the documentation.
 
 =head1 BUGS
+
+This module does not support Te Reo Māori.  If you would be interested
+in translating the holiday names, region names or manual page to
+Māori, please contact the author.
 
 Please report issues via CPAN RT:
 
