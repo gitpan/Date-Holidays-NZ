@@ -2,10 +2,21 @@ package Date::Holidays::NZ;
 use strict;
 use base qw(Exporter);
 
-use Set::Scalar;
+our $SET;
+BEGIN {
+    eval { require Set::Scalar };
+    if ($@) {
+	require Set::Object;
+        die "Need at least Set::Object 1.09"
+	    if ($Set::Object::VERSION < 1.09);
+	$SET = "Set::Object";
+    } else {
+	$SET = "Set::Scalar";
+    }
+}
 
 use vars qw($VERSION @EXPORT @EXPORT_OK);
-$VERSION = '1.00';
+$VERSION = '1.01';
 @EXPORT = qw(is_nz_holiday nz_holidays nz_regional_day nz_holiday_date);
 @EXPORT_OK = qw(%HOLIDAYS $NATIONAL_HOLIDAYS %regions
 		nz_region_code nz_region_name %holiday_cache);
@@ -72,7 +83,7 @@ our %HOLIDAYS
       );
 
 our $NATIONAL_HOLIDAYS =
-    Set::Scalar->new( "Waitangi Day",
+    $SET->new( "Waitangi Day",
 		      "ANZAC Day",
 		      "New Years Day",
 		      "Day after New Years Day",
@@ -417,7 +428,9 @@ Returns a hashref of all defined holidays in the year. Keys in the
 hashref are in 'mmdd' format, the values are the names of the
 holidays.
 
-As per the previous function, a region name may be specified.
+As per the previous function, a region name may be specified.  If you
+do not specify a region, then no regional holidays are included in the
+returned hash.
 
 =item nz_regional_day($region)
 
@@ -503,7 +516,8 @@ as 2035 and 2046.  Depending on which method you call, you might get a
 different answer as to why those days are a holiday.
 
 Note that district councils are free to alter the holidays schedule at
-any time.
+any time.  Also, strictly speaking, it is the Pope that decides the
+date of Easter, upon which Easter Friday and Monday are based.
 
 I'm not entirely sure on which Anniversary Day the following NZ
 regions observe, so if it matters for you, please check that it is
