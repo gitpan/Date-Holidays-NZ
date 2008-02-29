@@ -1,6 +1,6 @@
 
 
-use Test::More tests => 196;
+use Test::More no_plan;
 
 BEGIN { use_ok("Date::Holidays::NZ") }
 
@@ -143,7 +143,7 @@ Nelson 	Monday 3 February 	Monday 2 February 	Monday 31 January Monday 30 Januar
 Canterbury 	Friday 14 November 	Friday 12 November 	Friday 11 November Friday 17 November 	Friday 16 November 	Friday 14 November 	Friday 13 November
 Canterbury (South) 	Monday 22 September 	Monday 27 September 	Monday 26 September Monday 25 September 	Monday 24 September 	Monday 22 September 	Monday 28 September
 West Coast 	Monday 1 December 	Monday 29 November 	Monday 5 December Monday 4 December 	Monday 3 December 	Monday 1 December 	Monday 7 December
-Otago 	Monday 24 March 	Monday 22 March 	Monday 21 March Monday 20 March 	Monday 26 March 	Monday 24 March 	Monday 23 March
+Otago  Monday 24 March 	Monday 22 March 	Monday 21 March Monday 20 March 	Monday 26 March 	Tuesday 25 March 	Monday 23 March
 Southland 	Monday 20 January 	Monday 19 January 	Monday 17 January Monday 16 January 	Monday 15 January 	Monday 14 January 	Monday 19 January
 Chatham Islands 	Monday 1 December 	Monday 29 November 	Monday 28 November Monday 27 November 	Monday 3 December 	Monday 1 December 	Monday 30 November
 DATA
@@ -161,19 +161,16 @@ for my $test ( @tests ) {
 	my $holname = is_nz_holiday(@ymd, $region);
 	my $pass = $holname && ! is_nz_holiday(@ymd);
 	$holname ||= nz_regional_day($region);
-	if ( !$pass and $region eq "Otago" and $holname eq "Easter Monday" ) {
-	    pass("@ymd - $holname in $region (whoops!)");
-	} else {
-	    ok($pass, "@ymd - $holname in $region");
-	    diag("$holname falls on ".nz_holiday_date($year, $holname)." in $year, not ".UnixDate($when, "%m%d"))
-		unless $pass;
-	}
+	ok($pass, "@ymd - only $region has $holname this day");
+	diag("$holname falls on ".nz_holiday_date($year, $holname)." in $year, not ".UnixDate($when, "%m%d"))
+	    unless $pass;
 	$year++;
     }
 }
 
-
+is(nz_holiday_date(2008, "Otago $AD"), "0325", "nz_holiday_date(regional)");
 is(nz_holiday_date(2035, "Otago $AD"), "0326", "nz_holiday_date(regional)");
+is(nz_holiday_date(2004, "Westland $AD"), "1129", "nz_holiday_date(regional)");
 is(nz_holiday_date(2035, "Easter Monday"), "0326", "nz_holiday_date(national)");
 is(nz_holiday_date(2004, "Christmas Day"), "1227", "nz_holiday_date(national, overflow)");
 

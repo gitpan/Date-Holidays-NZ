@@ -16,7 +16,7 @@ BEGIN {
 }
 
 use vars qw($VERSION @EXPORT @EXPORT_OK);
-$VERSION = '1.01';
+$VERSION = '1.02';
 @EXPORT = qw(is_nz_holiday nz_holidays nz_regional_day nz_holiday_date);
 @EXPORT_OK = qw(%HOLIDAYS $NATIONAL_HOLIDAYS %regions
 		nz_region_code nz_region_name %holiday_cache);
@@ -285,6 +285,7 @@ our %regional_holiday_cache
     = # exceptions
     ( "2004/Westland $AD" => "1129",
       "2008/Hawkes' Bay $AD" => "1017",
+      "2008/Otago $AD" => "0325",
     );
 
 our %holiday_cache;
@@ -352,7 +353,8 @@ sub nz_holiday_date {
 
 	return $date;
     } else {
-	return interpret_date($year, $HOLIDAYS{$holname});
+	return $regional_holiday_cache{"$year/$holname"}
+		|| interpret_date($year, $HOLIDAYS{$holname});
     }
 }
 
@@ -511,9 +513,20 @@ revolutionary and whatnot.
 
 =head1 ERRATA
 
-Otago Anniversary Day is due to fall on Easter Monday in 2008, as well
-as 2035 and 2046.  Depending on which method you call, you might get a
-different answer as to why those days are a holiday.
+Otago Anniversary Day is due to fall on Easter Monday in 2035 and 2046.
+When this happened in 2008, the council made Easter Tuesday the
+anniversary day; however this is not currently codified as a general
+rule, as it is up to the council to declare this in advance.  This was
+only fixed in Date::Holidays::NZ 1.02, which was released very close
+to the actual anniversary day - apologies for the delay in the update.
+For those days (in 2035 and beyond), depending on which method you
+call you might get a different answer as to why that day is a holiday
+for that region.
+
+Also in 1.02 was a fix which affected functions which would return
+the "normal" day for a holiday, rather than the day listed on the
+official government site, for a couple of regional days which did not
+match the general rule for when they were due.
 
 Note that district councils are free to alter the holidays schedule at
 any time.  Also, strictly speaking, it is the Pope that decides the
@@ -586,12 +599,12 @@ portions:
 
 Copyright (c) 2004 Lars Thegler. All rights reserved.
 
-This program is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
-
 some modifications
 
-Copyright (c) 2005 Sam Vilain. All rights reserved.
+Copyright (c) 2005, 2008, Sam Vilain. All rights reserved.
+
+This program is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
 
 =cut
 
